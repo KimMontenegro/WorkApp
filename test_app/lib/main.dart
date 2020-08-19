@@ -66,7 +66,8 @@ class _VideoAppState extends State<VideoApp> {
             //     ? _controller.pause()
             //     : _controller.play();
             if (finishedPlaying) {
-              _controller.seekTo(Duration.zero)
+              _controller.initialize();
+              //_controller.seekTo(Duration.zero);
               _controller.play();
             } else {
               _controller.value.isPlaying
