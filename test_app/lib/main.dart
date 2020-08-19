@@ -47,19 +47,38 @@ class _VideoAppState extends State<VideoApp> {
   }
 
   Widget _buildPlayerStack() {
+    // bool _visible = true;
     return Stack(
       children: [
         _buildPlayerCore(),
         FlatButton(
           onPressed: () => setState(() {
-            _controller.value.isPlaying
-                ? _controller.pause()
-                : _controller.play();
+            // _controller.value.isPlaying
+            //     ? !_controller.value.isPlaying
+            //         ? _controller.initialize()
+            //         : _controller.pause()
+            //     : _controller.play();
+            // ? _controller.pause()
+            // : _controller.play();
+            if (_controller.value.isPlaying) {
+              _controller.pause();
+            } else if (!_controller.value.isPlaying) {
+              _controller.play();
+            }
+            // } else if (_controller.value.duration == null) {
+            //   _controller.seekTo(Duration.zero);
+            //   _controller.play();
+            // }
           }),
           child: Center(
             child: _controller.value.isPlaying
-              ? Icon(Icons.pause, color: Colors.white)
-              : Icon(Icons.play_arrow, color: Colors.white),
+                ? Icon(Icons.pause, color: Colors.white)
+                : Icon(Icons.play_arrow, color: Colors.white),
+            // _controller.value.isPlaying
+            // ? Icon(Icons.pause, color: Colors.white)
+            // : (!_controller.value.isPlaying
+            //     ? Icon(Icons.play_arrow, color: Colors.white)
+            //     : Icon(Icons.replay, color: Colors.white))
           ),
         ),
       ],
@@ -71,22 +90,15 @@ class _VideoAppState extends State<VideoApp> {
       child: Center(
         child: AspectRatio(
           aspectRatio: _controller.value.aspectRatio,
+          // child: GestureDetector(
+          //   onTap: () {
+          //     if () {
+
+          //   },
           child: VideoPlayer(_controller),
+          // ),
         ),
       ),
     );
   }
 }
-
-// floatingActionButton: FloatingActionButton(
-//   onPressed: () {
-//     setState(() {
-//       _controller.value.isPlaying
-//           ? _controller.pause()
-//           : _controller.play();
-//     });
-//   },
-//   child: Icon(
-//     _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-//   ),
-// ),
