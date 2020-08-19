@@ -1,5 +1,6 @@
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
+//import 'dart:async';
 
 void main() => runApp(VideoApp());
 
@@ -9,6 +10,7 @@ class VideoApp extends StatefulWidget {
 }
 
 class _VideoAppState extends State<VideoApp> {
+  bool finishedPlaying = false;
   VideoPlayerController _controller;
   static const String MEDIA_URL =
       'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
@@ -21,6 +23,14 @@ class _VideoAppState extends State<VideoApp> {
         // Ensure the first frame is shown after the video
         // is initialized, even before the play button has been pressed.
         setState(() {});
+        _controller.addListener(() async {
+          if (_controller.value.duration == _controller.value.position) {
+            setState(() {
+              //_controller.seekTo(Duration.zero);
+              finishedPlaying = true;
+            });
+          }
+        });
       });
   }
 
@@ -47,33 +57,32 @@ class _VideoAppState extends State<VideoApp> {
   }
 
   Widget _buildPlayerStack() {
-    // bool _visible = true;
     return Stack(
       children: [
         _buildPlayerCore(),
         FlatButton(
           onPressed: () => setState(() {
             // _controller.value.isPlaying
-            //     ? !_controller.value.isPlaying
-            //         ? _controller.initialize()
-            //         : _controller.pause()
+            //     ? _controller.pause()
             //     : _controller.play();
-            // ? _controller.pause()
-            // : _controller.play();
-            if (_controller.value.isPlaying) {
-              _controller.pause();
-            } else if (!_controller.value.isPlaying) {
+            if (finishedPlaying) {
+              _controller.seekTo(Duration.zero)
               _controller.play();
+            } else {
+              _controller.value.isPlaying
+                  ? _controller.pause()
+                  : _controller.play();
             }
-            // } else if (_controller.value.duration == null) {
-            //   _controller.seekTo(Duration.zero);
-            //   _controller.play();
-            // }
           }),
           child: Center(
-            child: _controller.value.isPlaying
-                ? Icon(Icons.pause, color: Colors.white)
-                : Icon(Icons.play_arrow, color: Colors.white),
+            child: finishedPlaying
+                ? Icon(Icons.replay, color: Colors.white)
+                : (_controller.value.isPlaying)
+                    ? Icon(Icons.pause, color: Colors.white)
+                    : Icon(Icons.play_arrow, color: Colors.white),
+            // _controller.value.isPlaying
+            //     ? Icon(Icons.pause, color: Colors.white)
+            //     : Icon(Icons.play_arrow, color: Colors.white),
             // _controller.value.isPlaying
             // ? Icon(Icons.pause, color: Colors.white)
             // : (!_controller.value.isPlaying
@@ -90,13 +99,7 @@ class _VideoAppState extends State<VideoApp> {
       child: Center(
         child: AspectRatio(
           aspectRatio: _controller.value.aspectRatio,
-          // child: GestureDetector(
-          //   onTap: () {
-          //     if () {
-
-          //   },
           child: VideoPlayer(_controller),
-          // ),
         ),
       ),
     );
