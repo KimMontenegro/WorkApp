@@ -26,7 +26,6 @@ class _VideoAppState extends State<VideoApp> {
         _controller.addListener(() async {
           if (_controller.value.duration == _controller.value.position) {
             setState(() {
-              //_controller.seekTo(Duration.zero);
               finishedPlaying = true;
             });
           }
@@ -77,18 +76,11 @@ class _VideoAppState extends State<VideoApp> {
           }),
           child: Center(
             child: finishedPlaying
-                ? Icon(Icons.replay, color: Colors.white)
+                ? Icon(Icons.replay, color: Colors.white.withOpacity(0.5))
                 : (_controller.value.isPlaying)
-                    ? Icon(Icons.pause, color: Colors.white)
-                    : Icon(Icons.play_arrow, color: Colors.white),
-            // _controller.value.isPlaying
-            //     ? Icon(Icons.pause, color: Colors.white)
-            //     : Icon(Icons.play_arrow, color: Colors.white),
-            // _controller.value.isPlaying
-            // ? Icon(Icons.pause, color: Colors.white)
-            // : (!_controller.value.isPlaying
-            //     ? Icon(Icons.play_arrow, color: Colors.white)
-            //     : Icon(Icons.replay, color: Colors.white))
+                    ? Icon(Icons.pause, color: Colors.white.withOpacity(0.5))
+                    : Icon(Icons.play_arrow,
+                        color: Colors.white.withOpacity(0.5)),
           ),
         ),
       ],
