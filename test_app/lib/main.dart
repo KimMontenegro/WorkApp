@@ -68,15 +68,16 @@ class _VideoAppState extends State<VideoApp> {
           duration: Duration(seconds: 1),
           child: FlatButton(
             onPressed: () => setState(() {
-              if(finishedPlaying) {
-                _controller.initialize();
+              if (finishedPlaying) {
+                _controller.seekTo(Duration.zero);
+                //_controller.initialize();
                 _controller.play();
               } else if (_controller.value.isPlaying) {
                 _controller.pause();
                 _changeOpacity();
               } else {
-                _controller.play();
                 _changeOpacity();
+                _controller.play();
               }
             }),
             child: Center(
