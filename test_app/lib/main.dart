@@ -1,6 +1,5 @@
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
-//import 'dart:async';
 
 void main() => runApp(VideoApp());
 
@@ -11,6 +10,7 @@ class VideoApp extends StatefulWidget {
 
 class _VideoAppState extends State<VideoApp> {
   bool finishedPlaying = false;
+  double opacityLevel = 1.0;
   VideoPlayerController _controller;
   static const String MEDIA_URL =
       'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
@@ -43,6 +43,10 @@ class _VideoAppState extends State<VideoApp> {
     );
   }
 
+  void _changeOpacity() {
+    setState(() => opacityLevel = opacityLevel == 0 ? 1.0 : 0.0);
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -59,28 +63,29 @@ class _VideoAppState extends State<VideoApp> {
     return Stack(
       children: [
         _buildPlayerCore(),
-        FlatButton(
-          onPressed: () => setState(() {
-            // _controller.value.isPlaying
-            //     ? _controller.pause()
-            //     : _controller.play();
-            if (finishedPlaying) {
-              _controller.initialize();
-              //_controller.seekTo(Duration.zero);
-              _controller.play();
-            } else {
-              _controller.value.isPlaying
-                  ? _controller.pause()
-                  : _controller.play();
-            }
-          }),
-          child: Center(
-            child: finishedPlaying
-                ? Icon(Icons.replay, color: Colors.white.withOpacity(0.5))
-                : (_controller.value.isPlaying)
-                    ? Icon(Icons.pause, color: Colors.white.withOpacity(0.5))
-                    : Icon(Icons.play_arrow,
-                        color: Colors.white.withOpacity(0.5)),
+        AnimatedOpacity(
+          opacity: opacityLevel,
+          duration: Duration(seconds: 1),
+          child: FlatButton(
+            onPressed: () => setState(() {
+              if(finishedPlaying) {
+                _controller.initialize();
+                _controller.play();
+              } else if (_controller.value.isPlaying) {
+                _controller.pause();
+                _changeOpacity();
+              } else {
+                _controller.play();
+                _changeOpacity();
+              }
+            }),
+            child: Center(
+              child: finishedPlaying
+                  ? Icon(Icons.replay, color: Colors.white)
+                  : (_controller.value.isPlaying)
+                      ? Icon(Icons.pause, color: Colors.white)
+                      : Icon(Icons.play_arrow, color: Colors.white),
+            ),
           ),
         ),
       ],
