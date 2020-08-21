@@ -11,6 +11,7 @@ class VideoApp extends StatefulWidget {
 class _VideoAppState extends State<VideoApp> {
   bool finishedPlaying = false;
   double opacityLevel = 1.0;
+  bool isBuffering = false;
   VideoPlayerController _controller;
   static const String MEDIA_URL =
       'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
@@ -23,14 +24,15 @@ class _VideoAppState extends State<VideoApp> {
         // Ensure the first frame is shown after the video
         // is initialized, even before the play button has been pressed.
         setState(() {});
-        _controller.addListener(() async {
-          if (_controller.value.duration == _controller.value.position) {
-            setState(() {
-              finishedPlaying = true;
-            });
-          }
-        });
       });
+    _controller.addListener(() async {
+      if (_controller.value.duration == _controller.value.position) {
+        setState(() {
+          finishedPlaying = true;
+        });
+      }
+    });
+    //_controller.setLooping(false);
   }
 
   @override
@@ -44,7 +46,7 @@ class _VideoAppState extends State<VideoApp> {
   }
 
   void _changeOpacity() {
-    setState(() => opacityLevel = opacityLevel == 0 ? 1.0 : 0.0);
+    setState(() => opacityLevel = opacityLevel == 0.0 ? 1.0 : 0.0);
   }
 
   @override
@@ -70,8 +72,10 @@ class _VideoAppState extends State<VideoApp> {
             onPressed: () => setState(() {
               if (finishedPlaying) {
                 _controller.seekTo(Duration.zero);
-                //_controller.initialize();
                 _controller.play();
+                setState(() {
+                  finishedPlaying = false;
+                });
               } else if (_controller.value.isPlaying) {
                 _controller.pause();
                 _changeOpacity();
