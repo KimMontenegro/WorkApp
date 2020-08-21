@@ -93,6 +93,10 @@ class _VideoAppState extends State<VideoApp> {
             ),
           ),
         ),
+        Center(
+            child: _controller.value.isBuffering
+                ? const CircularProgressIndicator()
+                : null),
       ],
     );
   }
