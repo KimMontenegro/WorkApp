@@ -93,14 +93,14 @@ class _VideoAppState extends State<VideoApp> {
             ),
           ),
         ),
-        new Align(
+        Align(
           alignment: Alignment.bottomCenter,
-          child: new VideoProgressIndicator(
+          child: VideoProgressIndicator(
             _controller,
             allowScrubbing: true,
           ),
         ),
-        new Center(
+        Center(
             child: _controller.value.isBuffering
                 ? const CircularProgressIndicator()
                 : null),
