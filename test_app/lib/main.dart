@@ -11,7 +11,8 @@ class VideoApp extends StatefulWidget {
 class _VideoAppState extends State<VideoApp> {
   bool finishedPlaying = false;
   double opacityLevel = 1.0;
-  bool isBuffering = false;
+  final bool isBuffering = false;
+  //final bool allowScrubbing = true;
   VideoPlayerController _controller;
   static const String MEDIA_URL =
       'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
@@ -32,7 +33,6 @@ class _VideoAppState extends State<VideoApp> {
         });
       }
     });
-    //_controller.setLooping(false);
   }
 
   @override
@@ -93,7 +93,14 @@ class _VideoAppState extends State<VideoApp> {
             ),
           ),
         ),
-        Center(
+        new Align(
+          alignment: Alignment.bottomCenter,
+          child: new VideoProgressIndicator(
+            _controller,
+            allowScrubbing: true,
+          ),
+        ),
+        new Center(
             child: _controller.value.isBuffering
                 ? const CircularProgressIndicator()
                 : null),
