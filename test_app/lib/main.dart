@@ -11,7 +11,7 @@ class VideoApp extends StatefulWidget {
 class _VideoAppState extends State<VideoApp> {
   bool finishedPlaying = false;
   double opacityLevel = 1.0;
-  final bool isBuffering = false;
+  bool isBuffering = true;
   //final bool allowScrubbing = true;
   VideoPlayerController _controller;
   static const String MEDIA_URL =
@@ -49,6 +49,14 @@ class _VideoAppState extends State<VideoApp> {
     setState(() => opacityLevel = opacityLevel == 0.0 ? 1.0 : 0.0);
   }
 
+  void loading() {
+    setState(() {
+      if (_controller.value.isBuffering) {
+        isBuffering = true;
+      }
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -72,10 +80,11 @@ class _VideoAppState extends State<VideoApp> {
             onPressed: () => setState(() {
               if (finishedPlaying) {
                 _controller.seekTo(Duration.zero);
-                _controller.play();
+                //_controller.play();
                 setState(() {
                   finishedPlaying = false;
                 });
+                Icon(Icons.replay, color: Colors.white);
               } else if (_controller.value.isPlaying) {
                 _controller.pause();
                 _changeOpacity();
@@ -98,12 +107,10 @@ class _VideoAppState extends State<VideoApp> {
           child: VideoProgressIndicator(
             _controller,
             allowScrubbing: true,
+            padding: EdgeInsets.all(2.0),
           ),
         ),
-        Center(
-            child: _controller.value.isBuffering
-                ? const CircularProgressIndicator()
-                : null),
+        Center(child: isBuffering ? const CircularProgressIndicator() : null),
       ],
     );
   }
