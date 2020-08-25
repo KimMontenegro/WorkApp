@@ -48,11 +48,10 @@ class _VideoAppState extends State<VideoApp> {
   void _changeOpacity() {
     setState(() => opacityLevel = opacityLevel == 0.0 ? 1.0 : 0.0);
   }
-
+//not working lol
   void loading() {
     setState(() {
-      if (_controller.value.isBuffering) {
-        isBuffering = true;
+      isBuffering = !isBuffering;
       }
     });
   }
@@ -80,7 +79,7 @@ class _VideoAppState extends State<VideoApp> {
             onPressed: () => setState(() {
               if (finishedPlaying) {
                 _controller.seekTo(Duration.zero);
-                //_controller.play();
+                _controller.play();
                 setState(() {
                   finishedPlaying = false;
                 });
