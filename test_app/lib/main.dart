@@ -48,11 +48,11 @@ class _VideoAppState extends State<VideoApp> {
   void _changeOpacity() {
     setState(() => opacityLevel = opacityLevel == 0.0 ? 1.0 : 0.0);
   }
+
 //not working lol
-  void loading() {
+  void buffer() {
     setState(() {
       isBuffering = !isBuffering;
-      }
     });
   }
 
@@ -101,8 +101,10 @@ class _VideoAppState extends State<VideoApp> {
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
+        Positioned(
+          top: 420,
+          width: 360,
+          height: 10,
           child: VideoProgressIndicator(
             _controller,
             allowScrubbing: true,
