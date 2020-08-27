@@ -12,8 +12,8 @@ class _VideoAppState extends State<VideoApp> {
   bool finishedPlaying = false;
   double opacityLevel = 1.0;
   bool isBuffering = true;
-  // Duration vidDuration;
-  // Duration vidPosition;
+  Duration vidDuration;
+  Duration vidPosition;
   //final bool allowScrubbing = true;
   VideoPlayerController _controller;
   static const String MEDIA_URL =
@@ -27,7 +27,7 @@ class _VideoAppState extends State<VideoApp> {
         // Ensure the first frame is shown after the video
         // is initialized, even before the play button has been pressed.
         setState(() {
-          //vidDuration = _controller.value.duration;
+          vidDuration = _controller.value.duration;
         });
       });
     _controller.addListener(() async {
@@ -36,9 +36,9 @@ class _VideoAppState extends State<VideoApp> {
           finishedPlaying = true;
         });
       }
-      // setState(() {
-      //   vidPosition = _controller.value.position;
-      // });
+      setState(() {
+        vidPosition = _controller.value.position;
+      });
     });
   }
 
@@ -69,6 +69,12 @@ class _VideoAppState extends State<VideoApp> {
     _controller.dispose();
   }
 
+  String convertMinToSec(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds;
+    return '$minutes:$seconds';
+  }
+
   Widget _buildPlayer() {
     return Center(
       child: _controller.value.initialized ? _buildPlayerStack() : Container(),
@@ -76,56 +82,62 @@ class _VideoAppState extends State<VideoApp> {
   }
 
   Widget _buildPlayerStack() {
-    return Stack(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildPlayerCore(),
-            AnimatedOpacity(
-              opacity: opacityLevel,
-              duration: Duration(seconds: 1),
-              child: FlatButton(
-                onPressed: () => setState(() {
-                  if (finishedPlaying) {
-                    _controller.seekTo(Duration.zero);
-                    _controller.play();
-                    setState(() {
-                      finishedPlaying = false;
-                    });
-                    Icon(Icons.replay, color: Colors.white);
-                  } else if (_controller.value.isPlaying) {
-                    _controller.pause();
-                    _changeOpacity();
-                  } else {
-                    _changeOpacity();
-                    _controller.play();
-                  }
-                }),
-                child: finishedPlaying
-                    ? Icon(Icons.replay, color: Colors.white)
-                    : (_controller.value.isPlaying)
-                        ? Icon(Icons.pause, color: Colors.white)
-                        : Icon(Icons.play_arrow, color: Colors.white),
-              ),
+        Container(
+          child: AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+            child: Stack(
+              children: [
+                Container(
+                  child: VideoPlayer(_controller),
+                ),
+                Container(
+                  alignment: Alignment(0.9, 0.9),
+                  child: AnimatedOpacity(
+                    opacity: opacityLevel,
+                    duration: Duration(seconds: 1),
+                    child: FlatButton(
+                      onPressed: () => setState(() {
+                        if (finishedPlaying) {
+                          _controller.seekTo(Duration.zero);
+                          _controller.play();
+                          setState(() {
+                            finishedPlaying = false;
+                          });
+                          Icon(Icons.replay, color: Colors.white);
+                        } else if (_controller.value.isPlaying) {
+                          _controller.pause();
+                          _changeOpacity();
+                        } else {
+                          _changeOpacity();
+                          _controller.play();
+                        }
+                      }),
+                      child: Center(
+                        child: finishedPlaying
+                            ? Icon(Icons.replay, color: Colors.white)
+                            : (_controller.value.isPlaying)
+                                ? Icon(Icons.pause, color: Colors.white)
+                                : Icon(Icons.play_arrow, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment(1.1, 1.1),
+                  child: VideoProgressIndicator(
+                    _controller,
+                    allowScrubbing: true,
+                    padding: EdgeInsets.all(2.0),
+                  ),
+                )
+              ],
             ),
-            Container(
-              child: VideoProgressIndicator(_controller, allowScrubbing: true),
-            ),
-          ],
+          ),
         )
       ],
-    );
-  }
-
-  Widget _buildPlayerCore() {
-    return Container(
-      child: Center(
-        child: AspectRatio(
-          aspectRatio: _controller.value.aspectRatio,
-          child: VideoPlayer(_controller),
-        ),
-      ),
     );
   }
 }
