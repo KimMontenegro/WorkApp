@@ -94,7 +94,14 @@ class _VideoAppState extends State<VideoApp> {
                   child: VideoPlayer(_controller),
                 ),
                 Container(
-                  alignment: Alignment(0.9, 0.9),
+                  alignment: Alignment.bottomCenter,
+                  child: VideoProgressIndicator(_controller,
+                      allowScrubbing: true,
+                      padding:
+                          EdgeInsets.symmetric(vertical: 1.0, horizontal: 1.0)),
+                ),
+                Align(
+                  alignment: Alignment.center,
                   child: AnimatedOpacity(
                     opacity: opacityLevel,
                     duration: Duration(seconds: 1),
@@ -125,14 +132,6 @@ class _VideoAppState extends State<VideoApp> {
                     ),
                   ),
                 ),
-                Container(
-                  alignment: Alignment(1.1, 1.1),
-                  child: VideoProgressIndicator(
-                    _controller,
-                    allowScrubbing: true,
-                    padding: EdgeInsets.all(2.0),
-                  ),
-                )
               ],
             ),
           ),
