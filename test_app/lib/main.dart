@@ -69,12 +69,6 @@ class _VideoAppState extends State<VideoApp> {
     _controller.dispose();
   }
 
-  // String convertMinToSec(Duration duration) {
-  //   final minutes = duration.inMinutes;
-  //   final seconds = duration.inSeconds;
-  //   return '$minutes:$seconds';
-  // }
-
   Widget _buildPlayer() {
     return Center(
       child: _controller.value.initialized ? _buildPlayerStack() : Container(),
@@ -85,6 +79,7 @@ class _VideoAppState extends State<VideoApp> {
     return Stack(
       children: [
         Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildPlayerCore(),
             AnimatedOpacity(
@@ -107,26 +102,17 @@ class _VideoAppState extends State<VideoApp> {
                     _controller.play();
                   }
                 }),
-                child: Center(
-                  child: finishedPlaying
-                      ? Icon(Icons.replay, color: Colors.white)
-                      : (_controller.value.isPlaying)
-                          ? Icon(Icons.pause, color: Colors.white)
-                          : Icon(Icons.play_arrow, color: Colors.white),
-                ),
+                child: finishedPlaying
+                    ? Icon(Icons.replay, color: Colors.white)
+                    : (_controller.value.isPlaying)
+                        ? Icon(Icons.pause, color: Colors.white)
+                        : Icon(Icons.play_arrow, color: Colors.white),
               ),
             ),
             Container(
-                child:
-                    VideoProgressIndicator(_controller, allowScrubbing: true),
-                    ),
+              child: VideoProgressIndicator(_controller, allowScrubbing: true),
+            ),
           ],
-          Center(child: isBuffering ? const CircularProgressIndicator() : null),
-        Positioned(
-          top: 430,
-          child: Text(
-              '${convertMinToSec(vidPosition)} / ${convertMinToSec(vidDuration)}'),
-        )
         )
       ],
     );
