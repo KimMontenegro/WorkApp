@@ -15,7 +15,6 @@ class _VideoAppState extends State<VideoApp> {
   Duration vidDuration;
   Duration vidPosition;
   // bool _doubleTap = true;
-  //final bool allowScrubbing = true;
   VideoPlayerController _controller;
   static const String MEDIA_URL =
       'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
