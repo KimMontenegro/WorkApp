@@ -69,17 +69,24 @@ class _VideoAppState extends State<VideoApp> {
     _controller.dispose();
   }
 
-  String convertMinToSec(Duration duration) {
-    final minutes = duration.inMinutes;
-    final seconds = duration.inSeconds;
-    return '$minutes:$seconds';
-  }
+  // String convertMinToSec(Duration duration) {
+  //   final minutes = duration.inMinutes;
+  //   final seconds = duration.inSeconds;
+  //   return '$minutes:$seconds';
+  // }
 
   Widget _buildPlayer() {
     return Center(
       child: _controller.value.initialized ? _buildPlayerStack() : Container(),
     );
   }
+  // Widget _buildTap(){
+  //   return Center(
+  //     child: GestureDetector(
+  //       onDoubleTap: ,
+  //     )
+  //   )
+  // }
 
   Widget _buildPlayerStack() {
     return Column(
@@ -92,13 +99,6 @@ class _VideoAppState extends State<VideoApp> {
               children: [
                 Container(
                   child: VideoPlayer(_controller),
-                ),
-                Container(
-                  alignment: Alignment.bottomCenter,
-                  child: VideoProgressIndicator(_controller,
-                      allowScrubbing: true,
-                      padding:
-                          EdgeInsets.symmetric(vertical: 1.0, horizontal: 1.0)),
                 ),
                 Align(
                   alignment: Alignment.center,
@@ -135,7 +135,12 @@ class _VideoAppState extends State<VideoApp> {
               ],
             ),
           ),
-        )
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: VideoProgressIndicator(_controller,
+              allowScrubbing: true, padding: EdgeInsets.all(1.0)),
+        ),
       ],
     );
   }
