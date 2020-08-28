@@ -14,7 +14,7 @@ class _VideoAppState extends State<VideoApp> {
   bool isBuffering = true;
   Duration vidDuration;
   Duration vidPosition;
-  // bool _doubleTap = true;
+  //bool _doubleTap = true;
   VideoPlayerController _controller;
   static const String MEDIA_URL =
       'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
@@ -71,7 +71,7 @@ class _VideoAppState extends State<VideoApp> {
 
   String convertMinToSec(Duration duration) {
     final minutes = duration.inMinutes;
-    final seconds = duration.inSeconds;
+    final seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
   }
 
