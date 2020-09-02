@@ -14,8 +14,8 @@ class _VideoAppState extends State<VideoApp> {
   bool isBuffering = true;
   Duration vidDuration;
   Duration vidPosition;
-  //bool _doubleTap = true;
   VideoPlayerController _controller;
+  TextEditingController _txtController;
   static const String MEDIA_URL =
       'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
 
@@ -40,16 +40,9 @@ class _VideoAppState extends State<VideoApp> {
         vidPosition = _controller.value.position;
       });
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Video Demo',
-      home: Scaffold(
-        body: _buildPlayer(),
-      ),
-    );
+    setState(() {
+      _txtController = TextEditingController();
+    });
   }
 
   void _changeOpacity() {
@@ -69,6 +62,35 @@ class _VideoAppState extends State<VideoApp> {
     _controller.dispose();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Video Demo',
+      home: Scaffold(
+        body: _buildPlayer(),
+      ),
+    );
+  }
+
+  Widget _buildInput() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        TextField(
+          controller: _txtController,
+          decoration: InputDecoration(hintText: "Enter URL"),
+        ),
+        Container(
+          alignment: Alignment.center,
+          child: RaisedButton(
+            onPressed: () => print("pressed"),
+            child: Text("load"),
+          ),
+        ),
+      ],
+    );
+  }
+
   String convertMinToSec(Duration duration) {
     final minutes = duration.inMinutes;
     final seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
@@ -81,21 +103,28 @@ class _VideoAppState extends State<VideoApp> {
     );
   }
 
-  // Widget _buildTap() {
-  //   return Center(
-  //     child: GestureDetector(
-  //       behavior: HitTestBehavior.opaque,
-  //       onDoubleTap: () => setState(() {
-  //         _doubleTap = !_doubleTap;
-  //       }),
-  //     ),
-  //   );
-  // }
+  Widget _buildText() {
+    return Container(
+        child: AnimatedOpacity(
+      opacity: opacityLevel,
+      duration: Duration(seconds: 3),
+      child: Text(
+        '${convertMinToSec(vidPosition)} / ${convertMinToSec(vidDuration)}',
+        style: TextStyle(
+          color: Colors.white,
+        ),
+      ),
+    ));
+  }
 
   Widget _buildPlayerStack() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Align(
+          alignment: Alignment.topCenter,
+          child: _buildInput(),
+        ),
         Container(
           child: AspectRatio(
             aspectRatio: _controller.value.aspectRatio,
@@ -108,7 +137,7 @@ class _VideoAppState extends State<VideoApp> {
                   alignment: Alignment.center,
                   child: AnimatedOpacity(
                     opacity: opacityLevel,
-                    duration: Duration(seconds: 1),
+                    duration: Duration(seconds: 3),
                     child: FlatButton(
                       onPressed: () => setState(() {
                         if (finishedPlaying) {
@@ -141,7 +170,11 @@ class _VideoAppState extends State<VideoApp> {
                   child: _controller.value.isBuffering
                       ? const CircularProgressIndicator()
                       : null,
-                )
+                ),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: _buildText(),
+                ),
               ],
             ),
           ),
@@ -149,13 +182,8 @@ class _VideoAppState extends State<VideoApp> {
         Align(
           alignment: Alignment.bottomCenter,
           child: VideoProgressIndicator(_controller,
-              allowScrubbing: true, padding: EdgeInsets.all(1.0)),
+              allowScrubbing: true, padding: EdgeInsets.all(0)),
         ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-              '${convertMinToSec(vidPosition)} / ${convertMinToSec(vidDuration)}'),
-        )
       ],
     );
   }
