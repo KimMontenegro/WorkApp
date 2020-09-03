@@ -16,14 +16,16 @@ class _VideoAppState extends State<VideoApp> {
   Duration vidPosition;
   VideoPlayerController _controller;
   TextEditingController _txtController;
-  static const String MEDIA_URL =
-      'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
+  String mediaURL =
+      'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4 ';
+  //'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(MEDIA_URL)
+    _controller = VideoPlayerController.network(mediaURL)
       ..initialize().then((_) {
+        setState(() {});
         // Ensure the first frame is shown after the video
         // is initialized, even before the play button has been pressed.
         setState(() {
@@ -83,7 +85,9 @@ class _VideoAppState extends State<VideoApp> {
         Container(
           alignment: Alignment.center,
           child: RaisedButton(
-            onPressed: () => print("pressed"),
+            onPressed: () async {
+              mediaURL = _txtController.text;
+            },
             child: Text("load"),
           ),
         ),
