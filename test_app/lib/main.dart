@@ -17,8 +17,9 @@ class _VideoAppState extends State<VideoApp> {
   VideoPlayerController _controller;
   TextEditingController _txtController;
   String mediaURL =
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4 ';
-  //'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
+      // 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4';
+      // 'https://
+      'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
 
   @override
   void initState() {
@@ -87,6 +88,9 @@ class _VideoAppState extends State<VideoApp> {
           child: RaisedButton(
             onPressed: () async {
               mediaURL = _txtController.text;
+              _controller = VideoPlayerController.network(mediaURL);
+              await _controller.initialize();
+              setState(() {});
             },
             child: Text("load"),
           ),
