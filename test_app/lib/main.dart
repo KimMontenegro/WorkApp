@@ -9,16 +9,14 @@ class VideoApp extends StatefulWidget {
 }
 
 class _VideoAppState extends State<VideoApp> {
-  bool finishedPlaying = false;
-  double opacityLevel = 1.0;
-  bool isBuffering = true;
-  Duration vidDuration;
-  Duration vidPosition;
+  bool _finishedPlaying = false;
+  double _opacityLevel = 1.0;
+  Duration vidDuration, vidPosition;
   VideoPlayerController _controller;
-  TextEditingController _txtController;
+  TextEditingController _textController;
+
   String mediaURL =
       // 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4';
-      // 'https://
       'https://dash.akamaized.net/envivio/EnvivioDash3/manifest.mpd';
 
   @override
@@ -29,40 +27,24 @@ class _VideoAppState extends State<VideoApp> {
         setState(() {});
         // Ensure the first frame is shown after the video
         // is initialized, even before the play button has been pressed.
-        setState(() {
-          vidDuration = _controller.value.duration;
-        });
+        setState(() => vidDuration = _controller.value.duration);
       });
-    _controller.addListener(() async {
-      if (_controller.value.duration == _controller.value.position) {
-        setState(() {
-          finishedPlaying = true;
-        });
-      }
+    _controller.addListener(_videoListener);
+    _textController = TextEditingController();
+  }
+
+  void _videoListener() {
+    if (this._controller.value.duration == this._controller.value.position) {
       setState(() {
-        vidPosition = _controller.value.position;
+        this._finishedPlaying = true;
+        this._opacityLevel = 1;
       });
-    });
-    setState(() {
-      _txtController = TextEditingController();
-    });
+    }
+    setState(() => vidPosition = _controller.value.position);
   }
 
   void _changeOpacity() {
-    setState(() => opacityLevel = opacityLevel == 0.0 ? 1.0 : 0.0);
-  }
-
-//not working lol
-  void buffer() {
-    setState(() {
-      isBuffering = !isBuffering;
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
+    setState(() => _opacityLevel = _opacityLevel == 0.0 ? 1.0 : 0.0);
   }
 
   @override
@@ -80,17 +62,20 @@ class _VideoAppState extends State<VideoApp> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         TextField(
-          controller: _txtController,
+          controller: _textController,
           decoration: InputDecoration(hintText: "Enter URL"),
         ),
         Container(
           alignment: Alignment.center,
           child: RaisedButton(
             onPressed: () async {
-              mediaURL = _txtController.text;
-              _controller = VideoPlayerController.network(mediaURL);
-              await _controller.initialize();
-              setState(() {});
+              mediaURL = _textController.text;
+              setState(() async {
+                _controller = VideoPlayerController.network(mediaURL);
+                await _controller.initialize();
+                setState(() => vidDuration = _controller.value.duration);
+                _controller.addListener(_videoListener);
+              });
             },
             child: Text("load"),
           ),
@@ -114,7 +99,7 @@ class _VideoAppState extends State<VideoApp> {
   Widget _buildText() {
     return Container(
         child: AnimatedOpacity(
-      opacity: opacityLevel,
+      opacity: _opacityLevel,
       duration: Duration(seconds: 3),
       child: Text(
         '${convertMinToSec(vidPosition)} / ${convertMinToSec(vidDuration)}',
@@ -144,17 +129,16 @@ class _VideoAppState extends State<VideoApp> {
                 Align(
                   alignment: Alignment.center,
                   child: AnimatedOpacity(
-                    opacity: opacityLevel,
+                    opacity: _opacityLevel,
                     duration: Duration(seconds: 3),
                     child: FlatButton(
                       onPressed: () => setState(() {
-                        if (finishedPlaying) {
+                        if (_finishedPlaying) {
                           _controller.seekTo(Duration.zero);
                           _controller.play();
                           setState(() {
-                            finishedPlaying = false;
+                            _finishedPlaying = false;
                           });
-                          Icon(Icons.replay, color: Colors.white);
                         } else if (_controller.value.isPlaying) {
                           _controller.pause();
                           _changeOpacity();
@@ -164,7 +148,7 @@ class _VideoAppState extends State<VideoApp> {
                         }
                       }),
                       child: Center(
-                        child: finishedPlaying
+                        child: _finishedPlaying
                             ? Icon(Icons.replay, color: Colors.white)
                             : (_controller.value.isPlaying)
                                 ? Icon(Icons.pause, color: Colors.white)
@@ -172,12 +156,6 @@ class _VideoAppState extends State<VideoApp> {
                       ),
                     ),
                   ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: _controller.value.isBuffering
-                      ? const CircularProgressIndicator()
-                      : null,
                 ),
                 Align(
                   alignment: Alignment.bottomLeft,
@@ -194,5 +172,12 @@ class _VideoAppState extends State<VideoApp> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+    _textController.dispose();
   }
 }
